@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import {Script} from "script/Script.s.sol";
+import {Script} from "forge-std/Script.sol";
 import {VRFCoordinatorV2_5Mock} from "@chainlink/contracts/src/v0.8/vrf/mocks/VRFCoordinatorV2_5Mock.sol";
 
 abstract contract CodeConstants {
@@ -35,7 +35,7 @@ contract HelperConfig is Script, CodeConstants {
     function getConfigByChainId(
         uint256 chainId
     ) public returns (NetworkConfig memory) {
-        if (newtworkConfigs[chainId].vrfCoordinator != address(0)) {
+        if (networkConfigs[chainId].vrfCoordinator != address(0)) {
             return networkConfigs[chainId];
         } else if (chainId == LOCAL_CHAIN_ID) {
             return getOrCreateAnvilEthConfig();
