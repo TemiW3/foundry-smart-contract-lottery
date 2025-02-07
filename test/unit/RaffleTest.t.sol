@@ -74,13 +74,42 @@ contract RaffleTest is Test {
         // Arrange
         vm.prank(PLAYER);
         raffle.enterRaffle{value: entranceFee}();
-        vm.warp(block.timestamp + interval + 1); // used to set the blocktime to whatever time we want by adding the number of seconds we want to add
-        vm.roll(block.number + 1); // used to update the block nunber
+        // used to set the blocktime to whatever time we want by adding the number of seconds we want to add
+        vm.warp(block.timestamp + interval + 1);
+        // used to update the block nunber
+        vm.roll(block.number + 1);
         raffle.performUpkeep("");
 
         // Act/Assert
         vm.expectRevert(Raffle.Raffle__RaffleNotOpen.selector);
         vm.prank(PLAYER);
         raffle.enterRaffle{value: entranceFee}();
+    }
+
+    function testCheckUpkeepReturnsFalseIfItHasNoBalance() public {
+        // Arrange
+        vm.warp(block.timestamp + interval + 1);
+        vm.roll(block.number + 1);
+
+        // Act
+        (bool upkeepNeeded, ) = raffle.checkUpkeep("");
+
+        // Assert
+        assert(!upkeepNeeded);
+    }
+
+    function testCheckUpkeepReturnsFalseIfRaffleIsntOpen() public {
+        // Arrange
+        vm.prank(PLAYER);
+        raffle.enterRaffle{value: entranceFee}();
+        vm.warp(block.timestamp + interval + 1);
+        vm.roll(block.number + 1);
+        raffle.performUpkeep("");
+
+        // Act
+        (bool upkeepNeeded, ) = raffle.checkUpkeep("");
+
+        // Assert
+        assert(!upkeepNeeded);
     }
 }
