@@ -558,8 +558,7 @@ Typical gas costs:
 Built by **Temi W** - QA Engineer transitioning to Web3 Developer
 
 - GitHub: [@TemiW3](https://github.com/TemiW3)
-- Twitter: [Your Twitter Handle]
-- LinkedIn: [Your LinkedIn Profile]
+- Twitter: [@mr_temiw](https://x.com/mr_temiw)
 
 ---
 
