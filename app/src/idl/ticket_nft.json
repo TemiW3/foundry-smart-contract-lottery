@@ -1,0 +1,272 @@
+{
+  "version": "0.1.0",
+  "name": "ticket_nft",
+  "instructions": [
+    {
+      "name": "createEvent",
+      "accounts": [
+        {
+          "name": "event",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "collectionMint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "collectionTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "collectionMetadata",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "collectionMasterEdition",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMetadataProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "name": "location",
+          "type": "string"
+        },
+        {
+          "name": "eventDate",
+          "type": "i64"
+        },
+        {
+          "name": "saleEndDate",
+          "type": "i64"
+        },
+        {
+          "name": "ticketPrice",
+          "type": "u64"
+        },
+        {
+          "name": "maxTickets",
+          "type": "u32"
+        },
+        {
+          "name": "imageUri",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "buyTicket",
+      "accounts": [
+        {
+          "name": "event",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "buyer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "eventAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ticketMint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ticketTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ticketMetadata",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ticketMasterEdition",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMetadataProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "updateEventPrice",
+      "accounts": [
+        {
+          "name": "event",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "newPrice",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Event",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "publicKey"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "name": "location",
+            "type": "string"
+          },
+          {
+            "name": "eventDate",
+            "type": "i64"
+          },
+          {
+            "name": "saleEndDate",
+            "type": "i64"
+          },
+          {
+            "name": "ticketPrice",
+            "type": "u64"
+          },
+          {
+            "name": "maxTickets",
+            "type": "u32"
+          },
+          {
+            "name": "ticketsSold",
+            "type": "u32"
+          },
+          {
+            "name": "collectionMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "imageUri",
+            "type": "string"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "SaleEndDateInPast",
+      "msg": "Sale end date must be in the future"
+    },
+    {
+      "code": 6001,
+      "name": "EventDateBeforeSaleEnd",
+      "msg": "Event date must be after sale end date"
+    },
+    {
+      "code": 6002,
+      "name": "InvalidTicketCount",
+      "msg": "Ticket count must be greater than 0"
+    },
+    {
+      "code": 6003,
+      "name": "SaleEnded",
+      "msg": "Ticket sale has ended"
+    },
+    {
+      "code": 6004,
+      "name": "SoldOut",
+      "msg": "All tickets have been sold"
+    }
+  ]
+}

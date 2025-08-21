@@ -1,0 +1,11 @@
+[workspace]
+members = [
+    "programs/ticket-nft",
+    "app"
+]
+resolver = "2"
+
+[workspace.dependencies]
+anchor-lang = "0.29.0"
+anchor-spl = "0.29.0"
+solana-program = "~1.16.0"
