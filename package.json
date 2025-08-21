@@ -1,0 +1,30 @@
+{
+  "name": "ticket-nft-platform",
+  "version": "1.0.0",
+  "description": "Full-stack ticket selling platform with NFTs on Solana",
+  "scripts": {
+    "build-program": "anchor build",
+    "test-program": "anchor test",
+    "deploy-program": "anchor deploy",
+    "start-localnet": "solana-test-validator",
+    "install-app": "cd app && npm install",
+    "start-app": "cd app && npm start",
+    "build-app": "cd app && npm run build",
+    "dev": "concurrently \"npm run start-localnet\" \"npm run start-app\"",
+    "setup": "npm run install-app && anchor build",
+    "clean": "anchor clean && cd app && rm -rf node_modules build"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "solana",
+    "nft",
+    "tickets",
+    "blockchain",
+    "rust",
+    "anchor"
+  ],
+  "author": "TicketNFT Platform",
+  "license": "MIT"
+}

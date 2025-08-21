@@ -1,565 +1,284 @@
-# Smart Contract Lottery
+# TicketNFT Platform
 
-A decentralized lottery smart contract built with Foundry that allows users to enter by paying an entrance fee, uses Chainlink VRF for provably random winner selection, and automatically distributes the prize pool to the winner.
-
-**Status:** Educational/demo implementation. Not audited. Use at your own risk.
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [Architecture](#architecture)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Usage](#usage)
-  - [Local Development](#local-development)
-  - [Testing](#testing)
-  - [Deployment](#deployment)
-- [Smart Contract API](#smart-contract-api)
-- [Configuration](#configuration)
-- [Security Considerations](#security-considerations)
-- [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
-- [License](#license)
-
-## Overview
-
-This project implements a transparent, decentralized lottery system on Ethereum where:
-
-- Players enter the lottery by paying a fixed entrance fee
-- The contract automatically collects all entrance fees into a prize pool
-- After a specified time interval, the lottery automatically picks a winner using Chainlink VRF (Verifiable Random Function)
-- The entire prize pool is transferred to the winner
-- A new lottery round can then begin
-
-The lottery uses **Chainlink VRF v2** for cryptographically secure randomness, ensuring fair and verifiable winner selection.
+A full-stack decentralized ticket selling platform built on Solana where tickets are represented as NFTs. Event organizers can create events and automatically generate NFT collections for their tickets, while users can purchase tickets that are minted as unique NFTs.
 
 ## Features
 
-- **🎲 Provably Fair Randomness**: Uses Chainlink VRF for tamper-proof random number generation
-- **⏰ Automated Execution**: Time-based lottery rounds with automatic winner selection
-- **💰 Transparent Prize Pool**: All entrance fees go directly to the winner
-- **🔒 Secure Access Control**: Owner-only functions for lottery management
-- **⛽ Gas Optimized**: Efficient contract design with minimal gas consumption
-- **🧪 Comprehensive Testing**: Full test suite with edge case coverage
-- **📊 Event Logging**: Detailed events for off-chain monitoring and analytics
+### For Event Organizers
+- **Create Events**: Set up events with details like name, description, location, date, and ticket pricing
+- **NFT Collection Generation**: Automatically create NFT collections for each event
+- **Dynamic Pricing**: Update ticket prices before sale ends
+- **Revenue Management**: Receive payments directly in SOL
+
+### For Ticket Buyers
+- **Browse Events**: Discover available events with detailed information
+- **Purchase Tickets**: Buy tickets that are minted as unique NFTs
+- **Wallet Integration**: Connect with popular Solana wallets (Phantom, Solflare, Backpack)
+- **NFT Ownership**: True ownership of tickets as verifiable NFTs
+
+### Technical Features
+- **Solana Program**: Smart contract written in Rust using Anchor framework
+- **NFT Standards**: Follows Metaplex Token Metadata standards
+- **Modern Frontend**: React/TypeScript with Tailwind CSS
+- **Wallet Integration**: Comprehensive wallet adapter support
+- **Real-time Updates**: Dynamic event and ticket status updates
 
 ## Architecture
 
-```
-┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   Players       │───▶│  Lottery Contract │◀───│ Chainlink VRF   │
-│                 │    │                  │    │   Coordinator   │
-│ - Enter lottery │    │ - Collect fees   │    │                 │
-│ - Pay entrance  │    │ - Request random │    │ - Generate      │
-│   fee           │    │ - Select winner  │    │   random number │
-│                 │    │ - Transfer prize │    │                 │
-└─────────────────┘    └──────────────────┘    └─────────────────┘
-```
+### Smart Contract (Rust/Anchor)
+- **Event Creation**: Creates events with NFT collection initialization
+- **Ticket Purchasing**: Mints unique NFTs as tickets
+- **Access Control**: Owner-only functions for event management
+- **Payment Processing**: Direct SOL transfers to event organizers
 
-### Core Components
+### Frontend (React/TypeScript)
+- **Responsive Design**: Modern UI with Tailwind CSS
+- **Wallet Integration**: Solana wallet adapter
+- **Real-time Data**: Fetches live blockchain data
+- **User Experience**: Intuitive event browsing and ticket purchasing
 
-1. **Lottery Contract**: Main contract managing player entries and prize distribution
-2. **Chainlink VRF Integration**: Handles secure random number generation
-3. **State Management**: Tracks lottery state (OPEN, CALCULATING, CLOSED)
-4. **Access Control**: Owner-only administrative functions
+## Project Structure
+
+```
+ticket-nft-platform/
+├── programs/
+│   └── ticket-nft/
+│       ├── src/
+│       │   └── lib.rs          # Main Solana program
+│       └── Cargo.toml
+├── app/
+│   ├── src/
+│   │   ├── components/         # React components
+│   │   ├── contexts/          # React contexts (Wallet, Program)
+│   │   ├── pages/             # Application pages
+│   │   ├── types/             # TypeScript type definitions
+│   │   ├── utils/             # Utility functions
+│   │   └── idl/               # Program IDL
+│   ├── public/
+│   └── package.json
+├── Anchor.toml                 # Anchor configuration
+├── Cargo.toml                  # Workspace configuration
+└── package.json               # Build scripts
+```
 
 ## Prerequisites
 
-- **Node.js** 18+ and npm
-- **Foundry** toolkit installed
-- **Git** for version control
-
-### Install Foundry
-
-```bash
-# Install Foundry
-curl -L https://foundry.paradigm.xyz | bash
-foundryup
-
-# Verify installation
-forge --version
-cast --version
-anvil --version
-```
+- **Rust** (latest stable)
+- **Solana CLI** (v1.16.0 or later)
+- **Anchor CLI** (v0.29.0 or later)
+- **Node.js** (v16 or later)
+- **npm** or **yarn**
 
 ## Installation
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/TemiW3/foundry-smart-contract-lottery.git
-   cd foundry-smart-contract-lottery
+   git clone <repository-url>
+   cd ticket-nft-platform
    ```
 
 2. **Install dependencies**
    ```bash
-   forge install
+   npm run setup
    ```
 
-3. **Set up environment variables**
+3. **Configure Solana CLI**
    ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
+   solana config set --url devnet
+   solana-keygen new --outfile ~/.config/solana/id.json
+   solana airdrop 2
    ```
+
+## Development
+
+### Start Local Development
+
+1. **Start Solana Test Validator**
+   ```bash
+   npm run start-localnet
+   ```
+
+2. **Build and Deploy Program**
+   ```bash
+   npm run build-program
+   npm run deploy-program
+   ```
+
+3. **Start Frontend**
+   ```bash
+   npm run start-app
+   ```
+
+4. **Or run everything together**
+   ```bash
+   npm run dev
+   ```
+
+### Available Scripts
+
+- `npm run build-program` - Build the Solana program
+- `npm run test-program` - Run program tests
+- `npm run deploy-program` - Deploy program to configured cluster
+- `npm run start-localnet` - Start local Solana test validator
+- `npm run start-app` - Start React development server
+- `npm run build-app` - Build React app for production
+- `npm run setup` - Install all dependencies and build program
+- `npm run clean` - Clean build artifacts
 
 ## Usage
 
-### Local Development
+### Creating an Event
 
-1. **Compile the contracts**
-   ```bash
-   forge build
-   ```
+1. Connect your Solana wallet
+2. Navigate to "Create Event"
+3. Fill in event details:
+   - Event name and description
+   - Location and date/time
+   - Sale end date/time
+   - Ticket price in SOL
+   - Maximum number of tickets
+   - Optional event image URL
+4. Submit to create the event and NFT collection
 
-2. **Start local blockchain**
-   ```bash
-   # Terminal 1: Start Anvil local node
-   anvil
-   ```
+### Buying Tickets
 
-3. **Deploy to local network**
-   ```bash
-   # Terminal 2: Deploy contracts
-   forge script script/DeployLottery.s.sol --rpc-url http://localhost:8545 --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 --broadcast
-   ```
+1. Connect your Solana wallet
+2. Browse available events
+3. Click on an event to view details
+4. Click "Buy Ticket" to purchase
+5. Confirm the transaction in your wallet
+6. Receive your unique ticket NFT
 
-### Testing
+### Managing Events
 
-Run the comprehensive test suite:
+Event organizers can:
+- Update ticket prices before sale ends
+- View real-time sales data
+- Monitor ticket availability
 
-```bash
-# Run all tests
-forge test
+## Smart Contract Details
 
-# Run tests with verbosity
-forge test -vvv
+### Program ID
+- **Devnet**: `HKvKkTgKzGz8FNVX2VjKcgQbNhZyJm8aJQ8x4rWZpump`
 
-# Run specific test file
-forge test --match-path test/LotteryTest.t.sol
+### Key Instructions
+- `create_event` - Creates a new event with NFT collection
+- `buy_ticket` - Purchases a ticket and mints NFT
+- `update_event_price` - Updates ticket price (owner only)
 
-# Run with gas reporting
-forge test --gas-report
-
-# Generate test coverage report
-forge coverage
-```
-
-### Deployment
-
-#### Sepolia Testnet
-
-1. **Configure environment**
-   ```bash
-   # In .env file
-   SEPOLIA_RPC_URL=https://sepolia.infura.io/v3/YOUR_INFURA_KEY
-   PRIVATE_KEY=your_private_key_here
-   ETHERSCAN_API_KEY=your_etherscan_api_key
-   VRF_COORDINATOR=0x8103B0A8A00be2DDC778e6e7eaa21791Cd364625
-   LINK_TOKEN=0x779877A7B0D9E8603169DdbD7836e478b4624789
-   KEY_HASH=0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c
-   ```
-
-2. **Deploy to Sepolia**
-   ```bash
-   forge script script/DeployLottery.s.sol --rpc-url $SEPOLIA_RPC_URL --private-key $PRIVATE_KEY --broadcast --verify
-   ```
-
-#### Mainnet
-
-⚠️ **Warning**: Ensure thorough testing and security audits before mainnet deployment.
-
-```bash
-forge script script/DeployLottery.s.sol --rpc-url $MAINNET_RPC_URL --private-key $PRIVATE_KEY --broadcast --verify
-```
-
-## Smart Contract API
-
-### State Variables
-
-```solidity
-uint256 private immutable i_entranceFee;        // Entry fee in wei
-address payable[] private s_players;            // Array of entered players
-address private s_recentWinner;                 // Last lottery winner
-LotteryState private s_lotteryState;            // Current lottery state
-uint256 private s_lastTimeStamp;               // Last lottery timestamp
-```
-
-### Core Functions
-
-#### `enterLottery()` 
-- **Access**: Public
-- **Payable**: Yes (requires entrance fee)
-- **Description**: Allows players to enter the lottery by paying the entrance fee
-- **Requirements**: 
-  - Lottery must be in OPEN state
-  - Must send exactly the entrance fee amount
-
-```solidity
-function enterLottery() public payable {
-    if (msg.value != i_entranceFee) revert Lottery__NotEnoughETHEntered();
-    if (s_lotteryState != LotteryState.OPEN) revert Lottery__LotteryNotOpen();
-    s_players.push(payable(msg.sender));
-    emit LotteryEnter(msg.sender);
+### Account Structure
+```rust
+pub struct Event {
+    pub authority: Pubkey,        // Event organizer
+    pub name: String,             // Event name
+    pub description: String,      // Event description
+    pub location: String,         // Event location
+    pub event_date: i64,          // Event timestamp
+    pub sale_end_date: i64,       // Sale end timestamp
+    pub ticket_price: u64,        // Price in lamports
+    pub max_tickets: u32,         // Maximum tickets
+    pub tickets_sold: u32,        // Tickets sold count
+    pub collection_mint: Pubkey,  // NFT collection mint
+    pub image_uri: String,        // Event image URL
+    pub bump: u8,                 // PDA bump
 }
 ```
 
-#### `performUpkeep()` 
-- **Access**: Chainlink Automation
-- **Description**: Initiates the winner selection process using Chainlink VRF
-- **Requirements**: Automatically called when upkeep conditions are met
+## Frontend Features
 
-#### `fulfillRandomWords()` 
-- **Access**: Chainlink VRF Coordinator only
-- **Description**: Callback function that receives random number and selects winner
-- **Automated**: Called by Chainlink VRF after random number generation
+### Wallet Integration
+- Supports Phantom, Solflare, and Backpack wallets
+- Automatic connection and reconnection
+- Transaction signing and confirmation
 
-### View Functions
+### User Interface
+- **Home Page**: Browse all available events
+- **Event Details**: Detailed event information and ticket purchase
+- **Create Event**: Form for event organizers
+- **My Tickets**: View owned ticket NFTs
 
-```solidity
-function getEntranceFee() public view returns (uint256)
-function getPlayer(uint256 index) public view returns (address)
-function getRecentWinner() public view returns (address)
-function getLotteryState() public view returns (LotteryState)
-function getNumWords() public pure returns (uint256)
-function getNumberOfPlayers() public view returns (uint256)
-function getLastTimeStamp() public view returns (uint256)
-function getInterval() public view returns (uint256)
+### Real-time Updates
+- Live event status (active, expired, sold out)
+- Real-time ticket availability
+- Dynamic pricing updates
+
+## Security Features
+
+- **Access Control**: Owner-only functions protected
+- **Input Validation**: Comprehensive validation on dates, prices, and quantities
+- **PDA Security**: Program Derived Addresses for secure account generation
+- **NFT Standards**: Follows Metaplex standards for compatibility
+
+## Testing
+
+### Program Tests
+```bash
+npm run test-program
 ```
 
-### Events
+### Manual Testing
+1. Start local validator
+2. Deploy program
+3. Test event creation and ticket purchasing through frontend
 
-```solidity
-event LotteryEnter(address indexed player);
-event RequestedLotteryWinner(uint256 indexed requestId);
-event WinnerPicked(address indexed winner);
+## Deployment
+
+### Devnet Deployment
+```bash
+solana config set --url devnet
+npm run deploy-program
 ```
 
-### Custom Errors
-
-```solidity
-error Lottery__NotEnoughETHEntered();
-error Lottery__TransferFailed();
-error Lottery__LotteryNotOpen();
-error Lottery__UpkeepNotNeeded(uint256 currentBalance, uint256 numPlayers, uint256 lotteryState);
+### Mainnet Deployment
+```bash
+solana config set --url mainnet-beta
+npm run deploy-program
 ```
 
-## Configuration
-
-### Constructor Parameters
-
-The lottery contract requires these parameters during deployment:
-
-```solidity
-constructor(
-    address vrfCoordinatorV2,    // Chainlink VRF Coordinator address
-    uint256 entranceFee,         // Entry fee in wei (e.g., 0.01 ETH = 10000000000000000)
-    bytes32 gasLane,             // Chainlink VRF gas lane (key hash)
-    uint64 subscriptionId,       // Chainlink VRF subscription ID
-    uint32 callbackGasLimit,     // Gas limit for VRF callback (e.g., 500000)
-    uint256 interval             // Time between lottery rounds in seconds
-)
-```
-
-### Network Configurations
-
-#### Sepolia Testnet
-```solidity
-VRF_COORDINATOR = 0x8103B0A8A00be2DDC778e6e7eaa21791Cd364625
-LINK_TOKEN = 0x779877A7B0D9E8603169DdbD7836e478b4624789
-KEY_HASH = 0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c
-```
-
-#### Ethereum Mainnet
-```solidity
-VRF_COORDINATOR = 0x271682DEB8C4E0901D1a1550aD2e64D568E69909
-LINK_TOKEN = 0x514910771AF9Ca656af840dff83E8264EcF986CA
-KEY_HASH = 0x8af398995b04c28e9951adb9721ef74c74f93e6a478f39e7e0777be13527e7ef
-```
-
-## Security Considerations
-
-This implementation includes several security best practices:
-
-### ✅ **Implemented Protections**
-- **State Management**: Prevents entries during winner calculation
-- **Access Control**: Critical functions restricted to appropriate callers
-- **Custom Errors**: Gas-efficient error handling with descriptive messages
-- **Event Logging**: Comprehensive event emission for transparency
-- **Reentrancy Protection**: State changes before external calls
-- **Input Validation**: Proper validation of entrance fees and contract state
-
-### ⚠️ **Known Limitations**
-- **Single Round**: Contract handles one lottery round at a time
-- **Fixed Parameters**: Entrance fee and interval set at deployment
-- **No Pause Mechanism**: Cannot pause lottery once deployed
-- **Winner Selection**: Uses simple modulo operation (sufficient for current use case)
-
-### 🔍 **Recommended Audits**
-Before production deployment, consider auditing:
-- Chainlink VRF integration patterns
-- Prize distribution logic
-- Edge cases with zero players
-- Gas optimization opportunities
-- Upgrade mechanisms (if desired)
+Update the program ID in:
+- `Anchor.toml`
+- `app/src/contexts/ProgramProvider.tsx`
+- `programs/ticket-nft/src/lib.rs`
 
 ## Troubleshooting
 
 ### Common Issues
 
-#### **"Lottery__UpkeepNotNeeded" Error**
-**Cause**: Chainlink Automation conditions not met
-**Solutions**:
-- Ensure lottery has players: `getNumberOfPlayers() > 0`
-- Check lottery state: `getLotteryState() == OPEN`
-- Verify time elapsed: `block.timestamp - getLastTimeStamp() > getInterval()`
-- Confirm contract balance: `address(this).balance > 0`
+1. **Program deployment fails**
+   - Ensure sufficient SOL balance
+   - Check Solana CLI configuration
+   - Verify program ID matches in all files
 
-#### **"Lottery__NotEnoughETHEntered" Error**
-**Cause**: Incorrect entrance fee sent
-**Solution**: Send exactly the entrance fee amount:
-```bash
-cast send $LOTTERY_CONTRACT "enterLottery()" --value 0.01ether --private-key $PRIVATE_KEY
-```
+2. **Frontend connection issues**
+   - Check wallet is connected
+   - Verify network matches (devnet/mainnet)
+   - Clear browser cache and reconnect wallet
 
-#### **VRF Request Fails**
-**Cause**: Insufficient LINK tokens or incorrect subscription
-**Solutions**:
-- Fund your Chainlink VRF subscription with LINK tokens
-- Verify subscription ID matches deployment configuration
-- Check gas limit is sufficient (recommended: 500,000)
+3. **Transaction failures**
+   - Ensure sufficient SOL for transaction fees
+   - Check program is deployed on correct network
+   - Verify account permissions
 
-#### **Deployment Issues**
-**Cause**: Network configuration or insufficient funds
-**Solutions**:
-- Verify RPC URL is correct and accessible
-- Ensure deployer account has sufficient ETH for gas
-- Check constructor parameters match target network
+### Getting Help
 
-### Testing Locally
-
-```bash
-# Start fresh Anvil instance
-anvil
-
-# Deploy with local configuration
-forge script script/DeployLottery.s.sol --rpc-url http://localhost:8545 --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 --broadcast
-
-# Enter lottery as player
-cast send <LOTTERY_ADDRESS> "enterLottery()" --value 0.01ether --private-key 0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d
-
-# Check player count
-cast call <LOTTERY_ADDRESS> "getNumberOfPlayers()"
-```
-
-## Scripts
-
-Useful Foundry commands for development:
-
-```bash
-# Build contracts
-forge build
-
-# Run tests with different verbosity levels
-forge test                    # Basic test run
-forge test -vv               # Show logs for failing tests  
-forge test -vvv              # Show logs for all tests
-forge test -vvvv             # Show traces for failing tests
-forge test -vvvvv            # Show traces for all tests
-
-# Generate gas report
-forge test --gas-report
-
-# Check test coverage
-forge coverage
-
-# Format code
-forge fmt
-
-# Generate documentation
-forge doc
-
-# Verify contract on Etherscan
-forge verify-contract <CONTRACT_ADDRESS> src/Lottery.sol:Lottery --chain-id 11155111 --etherscan-api-key $ETHERSCAN_API_KEY
-```
-
-## Repository Structure
-
-```
-foundry-smart-contract-lottery/
-├── src/
-│   ├── Lottery.sol              # Main lottery contract
-│   └── interfaces/              # External interfaces
-├── test/
-│   ├── unit/
-│   │   └── LotteryTest.t.sol    # Unit tests
-│   └── integration/
-│       └── InteractionTest.t.sol # Integration tests
-├── script/
-│   ├── DeployLottery.s.sol      # Deployment script
-│   ├── Interactions.s.sol       # Interaction helpers
-│   └── HelperConfig.s.sol       # Network configurations
-├── lib/                         # Forge dependencies
-├── .env.example                 # Environment template
-├── foundry.toml                 # Foundry configuration
-└── README.md                    # This file
-```
-
-## Configuration
-
-### Environment Variables
-
-Create a `.env` file with the following variables:
-
-```bash
-# RPC URLs
-SEPOLIA_RPC_URL=https://sepolia.infura.io/v3/YOUR_INFURA_KEY
-MAINNET_RPC_URL=https://mainnet.infura.io/v3/YOUR_INFURA_KEY
-
-# Private key (never commit this!)
-PRIVATE_KEY=your_private_key_here
-
-# Etherscan API key for contract verification
-ETHERSCAN_API_KEY=your_etherscan_api_key
-
-# Chainlink VRF Configuration (Sepolia)
-VRF_COORDINATOR=0x8103B0A8A00be2DDC778e6e7eaa21791Cd364625
-LINK_TOKEN=0x779877A7B0D9E8603169DdbD7836e478b4624789
-KEY_HASH=0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c
-
-# Lottery Parameters
-ENTRANCE_FEE=10000000000000000  # 0.01 ETH in wei
-CALLBACK_GAS_LIMIT=500000       # Gas limit for VRF callback
-LOTTERY_INTERVAL=300            # 5 minutes in seconds
-```
-
-### Foundry Configuration
-
-The `foundry.toml` file contains project-specific settings:
-
-```toml
-[profile.default]
-src = "src"
-out = "out"
-libs = ["lib"]
-solc_version = "0.8.19"
-optimizer = true
-optimizer_runs = 200
-via_ir = false
-
-[profile.ci]
-fuzz = { runs = 10_000 }
-invariant = { runs = 1_000 }
-
-[fmt]
-bracket_spacing = true
-int_types = "long"
-line_length = 120
-multiline_func_header = "all"
-number_underscore = "thousands"
-quote_style = "double"
-tab_width = 4
-wrap_comments = true
-
-[fuzz]
-runs = 1000
-max_test_rejects = 65536
-seed = '0x3e8'
-dictionary_weight = 40
-include_storage = true
-include_push_bytes = true
-```
-
-## TypeScript Integration Example
-
-Here's how you might interact with the contract from a frontend:
-
-```typescript
-import { ethers } from 'ethers';
-import LotteryABI from './artifacts/Lottery.sol/Lottery.json';
-
-// Contract setup
-const provider = new ethers.providers.Web3Provider(window.ethereum);
-const signer = provider.getSigner();
-const lottery = new ethers.Contract(LOTTERY_ADDRESS, LotteryABI.abi, signer);
-
-// Enter lottery
-async function enterLottery() {
-  const entranceFee = await lottery.getEntranceFee();
-  const tx = await lottery.enterLottery({ value: entranceFee });
-  await tx.wait();
-}
-
-// Get lottery info
-async function getLotteryInfo() {
-  const [
-    entranceFee,
-    numPlayers,
-    recentWinner,
-    lotteryState
-  ] = await Promise.all([
-    lottery.getEntranceFee(),
-    lottery.getNumberOfPlayers(),
-    lottery.getRecentWinner(),
-    lottery.getLotteryState()
-  ]);
-  
-  return { entranceFee, numPlayers, recentWinner, lotteryState };
-}
-
-// Listen for winner selection
-lottery.on('WinnerPicked', (winner) => {
-  console.log(`Winner selected: ${winner}`);
-});
-```
-
-## Gas Optimization Notes
-
-This contract implements several gas optimization techniques:
-
-- **Packed Structs**: Efficient storage layout
-- **Custom Errors**: More gas-efficient than require strings
-- **Immutable Variables**: Reduced SLOAD operations for constants
-- **Event Indexing**: Strategic use of indexed parameters
-- **Batch Operations**: Minimizing external calls
-
-Typical gas costs:
-- **Enter Lottery**: ~50,000 gas
-- **Request Random Winner**: ~100,000 gas  
-- **Fulfill Random Words**: ~80,000 gas
+- Check console logs for error messages
+- Verify all dependencies are installed
+- Ensure Solana validator is running for local development
 
 ## Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+2. Create a feature branch
 3. Make your changes
-4. Add tests for new functionality
-5. Ensure all tests pass (`forge test`)
-6. Commit your changes (`git commit -m 'Add amazing feature'`)
-7. Push to the branch (`git push origin feature/amazing-feature`)
-8. Open a Pull Request
+4. Add tests if applicable
+5. Submit a pull request
 
-### Development Guidelines
+## License
 
-- Follow the existing code style and formatting
-- Add comprehensive tests for new features
-- Update documentation for any API changes
-- Use custom errors instead of require strings
-- Include detailed commit messages
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Acknowledgments
 
-- **Foundry**: Blazing fast Ethereum development framework
-- **Chainlink**: Decentralized oracle network for secure randomness
-- **OpenZeppelin**: Smart contract security standards and utilities
-- **Patrick Collins**: Educational resources and best practices
-
-## Contact
-
-Built by **Temi W** - QA Engineer transitioning to Web3 Developer
-
-- GitHub: [@TemiW3](https://github.com/TemiW3)
-- Twitter: [@mr_temiw](https://x.com/mr_temiw)
-
----
-
-⚠️ **Disclaimer**: This code is for educational purposes and has not been professionally audited. Do not use in production without thorough security review and testing. The developer assumes no responsibility for any losses incurred through the use of this code.
+- Built with [Anchor Framework](https://anchor-lang.com/)
+- Uses [Metaplex Token Metadata](https://docs.metaplex.com/programs/token-metadata/)
+- Frontend powered by [React](https://reactjs.org/) and [Solana Wallet Adapter](https://github.com/solana-labs/wallet-adapter)
