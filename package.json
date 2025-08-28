@@ -1,0 +1,27 @@
+{
+  "name": "smart-contract-interaction",
+  "version": "1.0.0",
+  "description": "Tools for interacting with deployed smart contracts on Sepolia",
+  "main": "contract_interaction_example.js",
+  "scripts": {
+    "start": "node contract_interaction_example.js",
+    "analyze": "python bytecode_analyzer.py",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ethereum",
+    "smart-contract",
+    "sepolia",
+    "web3",
+    "ethers"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "ethers": "^5.7.2"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
